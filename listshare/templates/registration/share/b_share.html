@@ -1,0 +1,227 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="r">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Акция {{ tik }} | Hard5</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="/static/assets/img/logo.png" rel="icon">
+  <link href="/static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+    rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="/static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="/static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/static/assets/vendor/quill/quill.snow.css" rel="stylesheet">
+  <link href="/static/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+  <link href="/static/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="/static/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="/static/assets/css/style.css" rel="stylesheet">
+
+
+</head>
+
+<header id="header" class="header fixed-top d-flex align-items-center">
+
+  <div class="d-flex align-items-center justify-content-between">
+    <a href="{% url 'index' %}" class="logo d-flex align-items-center">
+      <img src="/static/assets/img/logo.png" alt="">
+      <span class="d-none d-lg-block">Hard5</span>
+    </a>
+    
+  </div><!-- End Logo -->
+
+  
+
+  <nav class="header-nav ms-auto">
+    <ul class="d-flex align-items-center">
+
+      <li class="nav-item d-block d-lg-none">
+        <a class="nav-link nav-icon search-bar-toggle " href="#">
+          <i class="bi bi-search"></i>
+        </a>
+      </li><!-- End Search Icon-->
+
+      <li  class="nav-item dropdown lef">
+        <div class="wall">
+            <a class="nav-link nav-icon text-center mar" href="{% url 'pay' %}" >
+                <i class="bi bi-wallet2"> {{balance}}$</i>
+            </a><!-- End Messages Icon -->
+        </div>
+      </li><!-- End Messages Nav -->
+
+      <li class="nav-item dropdown pe-3">
+
+        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+          <img src="/static/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+          <span class="d-none d-md-block dropdown-toggle ps-2">{{ user }}</span>
+        </a><!-- End Profile Iamge Icon -->
+
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+          <li class="dropdown-header">
+            <h6>{{ user }}</h6>
+
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{% url 'user' %}">
+              <i class="bi bi-person"></i>
+              <span>Профиль</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{% url 'user' %}">
+              <i class="bi bi-gear"></i>
+              <span>Настройки</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="{% url 'login' %}">
+              <i class="bi bi-box-arrow-right"></i>
+              {% if user.is_authenticated %}
+              <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit">Выход</button>
+              </form>
+              {% else %}
+              <a href="{% url 'login' %}">Вход</a>
+              {% endif %}
+            </a>
+          </li>
+
+        </ul><!-- End Profile Dropdown Items -->
+      </li><!-- End Profile Nav -->
+
+    </ul>
+  </nav><!-- End Icons Navigation -->
+
+</header><!-- End Header -->
+
+
+<body>
+
+  <main>
+    <div class="container">
+
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+              <div class="card mb-3">
+
+                <div class="card-body">
+                  <div class="pt-4 pb-2">
+                    
+                  </div>
+                  <form class="mx-auto" method="post"> 
+                    {% csrf_token %}
+                
+                    <div class="card-body">
+                      <label for="share_ticker">Выберете тикер:</label>
+                      <select id="share_ticker" name="share_ticker">
+                        {% for share in shares %}
+                          <option value="{{ share.ticker }}" data-price="{{ share.price }}">{{ share }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                
+                
+                    <div class="card-body">
+                      <label for="share_quantity">Выберете количество акций:</label>
+                      <input type="number" id="share_quantity" name="share_quantity" min="1" required>
+                    </div>
+                
+                
+                    <div class="card-body">
+                      <input type="hidden" id="share_price" name="share_price" value="{{ shares.first.price }}">
+                      <label for="share_price">Цена за акцию$:</label>
+                      <span id="share_price_text">{{ shares.first.price }}</span>
+                    </div>
+                
+                
+                    <div class="card-body">
+                      <label for="total_price">Итого $:</label>
+                      <span id="total_price_text">{{ shares.first.price }}</span>
+                    </div>
+                
+                
+                    <div class="card-body">
+                      <button class='btn btn-blw' type="submit">Купить</button>
+                    </div>
+                </form>
+                </div>
+              </div>
+
+             
+
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main><!-- End #main -->
+
+</body>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+      class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script>
+    const shareTicker = document.getElementById('share_ticker');
+    const sharePrice = document.getElementById('share_price');
+    const totalPrice = document.getElementById('total_price_text');
+    shareTicker.addEventListener('change', () => {
+      const selectedOption = shareTicker.options[shareTicker.selectedIndex];
+      const price = selectedOption.getAttribute('data-price');
+      sharePrice.value = price;
+      sharePriceText.textContent = price;
+      totalPrice.textContent = price * document.getElementById('share_quantity').value;
+    });
+    document.getElementById('share_quantity').addEventListener('input', () => {
+      totalPrice.textContent = sharePrice.value * document.getElementById('share_quantity').value;
+    });
+  </script>
+  <script src="/static/assets/vendor/apexcharts/apexcharts.min.js"></script>
+  <script src="/static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="/static/assets/vendor/echarts/echarts.min.js"></script>
+  <script src="/static/assets/vendor/quill/quill.min.js"></script>
+  <script src="/static/assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="/static/assets/vendor/tinymce/tinymce.min.js"></script>
+  <script src="/static/assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="/static/assets/js/main.js"></script>
+
+
+
+</html>
+{% endblock %}
